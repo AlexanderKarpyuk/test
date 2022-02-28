@@ -15,22 +15,19 @@ public class UpdateTicketTest extends BaseTest {
         // todo: создать тикет со статусом Closed, затем обновить тикет и проверить сообщение об ошибке (негативный сценарий)
         Ticket ticket = BaseTest.buildNewTicket(Status.CLOSED,2);
         Ticket newTicket = createTicket(ticket);
-        Ticket actual = updateTicketNegative(newTicket);
-        Assert.assertEquals(actual.getStatus(),4);
+        Assert.assertEquals(ticket, newTicket);
+        newTicket.setStatus(Status.OPEN.getCode());
+        updateTicketNegative(newTicket);
     }
 
-    private Ticket updateTicketNegative(Ticket ticket) {
+    private void updateTicketNegative(Ticket ticket) {
         // todo: отправить HTTP запрос для обновления данных тикета и сразу же проверить статус код (должен соответствовать ошибке)
-        ticket.setStatus(1);
-        return given()
+        given()
                 .pathParam("id", ticket.getId())
                 .body(ticket)
                 .when()
-                .patch("/api/tickets/{id}")
+                .get("/api/tickets/{id}")
                 .then()
-                .statusCode(200)//422
-                .extract()
-                .body()
-                .as(Ticket.class);
+                .statusCode(422);
     }
 }
