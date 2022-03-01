@@ -12,22 +12,22 @@ public class UpdateTicketTest extends BaseTest {
 
     @Test
     public void updateTicketTest() {
-        // todo: создать тикет со статусом Closed, затем обновить тикет и проверить сообщение об ошибке (негативный сценарий)
         Ticket ticket = BaseTest.buildNewTicket(Status.CLOSED,2);
         Ticket newTicket = createTicket(ticket);
-        Assert.assertEquals(ticket, newTicket);
-        newTicket.setStatus(Status.OPEN.getCode());
-        updateTicketNegative(newTicket);
+        Ticket actual = updateTicketNegative(newTicket);
     }
 
-    private void updateTicketNegative(Ticket ticket) {
-        // todo: отправить HTTP запрос для обновления данных тикета и сразу же проверить статус код (должен соответствовать ошибке)
-        given()
+    private Ticket updateTicketNegative(Ticket ticket) {
+        ticket.setStatus(1);
+        return given()
                 .pathParam("id", ticket.getId())
                 .body(ticket)
                 .when()
-                .get("/api/tickets/{id}")
+                .patch("/api/tickets/{id}")
                 .then()
-                .statusCode(422);
+                .statusCode(422)
+                .extract()
+                .body()
+                .as(Ticket.class);
     }
 }

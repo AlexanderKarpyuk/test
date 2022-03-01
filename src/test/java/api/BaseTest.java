@@ -16,7 +16,6 @@ import static io.restassured.RestAssured.given;
 public abstract class BaseTest {
     @BeforeClass
     public void prepare() {
-        // todo: загрузить в системные переменные "base.uri" из "config.properties"
         try {
             System.getProperties().load(ClassLoader.getSystemResourceAsStream("config.properties"));
         } catch (IOException e) {
@@ -26,8 +25,6 @@ public abstract class BaseTest {
         if (baseUri == null || baseUri.isEmpty()) {
             throw new RuntimeException("В файле \"config.properties\" отсутствует значение \"base.uri\"");
         }
-
-        // todo: подготовить глобальные преднастройки для запросов
         RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder();
         requestSpecBuilder.setBaseUri(baseUri);
         requestSpecBuilder.addHeader("api_key", "Mdv31");
@@ -39,7 +36,6 @@ public abstract class BaseTest {
     }
 
     protected static Ticket buildNewTicket(Status status, int priority) {
-        // todo: создать объект с тестовыми данными
         Ticket ticket = new Ticket();
         ticket.setPriority(priority);
         ticket.setStatus(status.getCode());
@@ -47,11 +43,10 @@ public abstract class BaseTest {
     }
 
     protected Ticket createTicket(Ticket ticket) {
-        // todo: отправить HTTP запрос для создания тикета
         return given()
                 .body(ticket)
                 .when()
-                .post("/api/tickets/")
+                .post("/api/tickets")
                 .then()
                 .statusCode(201)
                 .extract()
